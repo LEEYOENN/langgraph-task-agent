@@ -5,12 +5,18 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "duckduckgo-search>=8.1.1",
     "fastapi>=0.135.1",
     "langchain>=1.2.12",
+    "langchain-chroma>=1.1.0",
+    "langchain-community>=0.4.1",
     "langchain-openai>=1.1.11",
+    "langchain-text-splitters>=1.1.1",
     "langgraph>=1.1.2",
     "pymupdf>=1.27.2",
+    "pypdf>=6.9.1",
     "python-dotenv>=1.2.2",
+    "sqlalchemy>=2.0.48",
     "tavily-python>=0.7.23",
     "uvicorn>=0.42.0",
 ]
