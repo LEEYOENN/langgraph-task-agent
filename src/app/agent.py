@@ -6,10 +6,8 @@ from langgraph.graph import StateGraph, START, END
 from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 from pathlib import Path 
-import os, sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
-from prompts import INVESTMENT_ANALYSIS_PROMPT
-from tools import retrieve_docs, search_news
+from src.app.prompts import INVESTMENT_ANALYSIS_PROMPT
+from src.app.tools import retrieve_docs, search_news
 # 환경변수 불러오기
 load_dotenv()
 current_path = Path(__file__).resolve()

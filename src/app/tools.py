@@ -43,7 +43,7 @@ def init_vector_db():
     docs = loader.load()
 
     # chunking
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chuck_overlap=100)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
     split_docs = text_splitter.split_documents(docs)
 
     # OpenAI 임베딩 사용해 로컬 디렉토리에 영구 저장

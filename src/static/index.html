@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 투자 분석 에이전트</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen p-8">
+    <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
+        <h1 class="text-2xl font-bold text-gray-800 mb-2">📊 AI 기반 상장사 투자 분석 (Clush Agent)</h1>
+        <p class="text-gray-600 mb-6">내부 PDF 리포트(RAG)와 최신 뉴스 검색(Web)을 종합하여 분석 리포트를 제공합니다.</p>
+        
+        <form id="analyzeForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">분석 대상 기업명</label>
+                <input type="text" id="company" value="미래에셋증권" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">질문 내역</label>
+                <input type="text" id="query" value="최근 비즈니스 동향과 투자 시 고려해야 할 위험 요소를 분석해줘." required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <button type="submit" id="submitBtn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
+                분석 시작 (LangGraph 에이전트 호출)
+            </button>
+        </form>
+
+        <div id="loading" class="hidden mt-6 flex flex-col items-center">
+            <svg class="animate-spin h-8 w-8 text-blue-600 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="text-sm text-gray-500">에이전트가 문서를 검색하고 리포트를 작성 중입니다... (약 10~20초 소요)</p>
+        </div>
+
+        <div id="resultContainer" class="hidden mt-8 border-t pt-6">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">📝 분석 결과 리포트</h2>
+            <div id="resultText" class="prose max-w-none text-gray-700"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('analyzeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const resultContainer = document.getElementById('resultContainer');
+            const resultText = document.getElementById('resultText');
+            
+            // UI 초기화
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+            loading.classList.remove('hidden');
+            resultContainer.classList.add('hidden');
+            resultText.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        target_company: document.getElementById('company').value,
+                        user_query: document.getElementById('query').value
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if(data.status === "COMPLETED") {
+                    // Markdown을 HTML로 변환하여 렌더링
+                    resultText.innerHTML = marked.parse(data.result_text);
+                } else {
+                    resultText.innerHTML = `<p class="text-red-500">에러 발생: ${data.result_text}</p>`;
+                }
+            } catch (error) {
+                resultText.innerHTML = `<p class="text-red-500">서버 통신 오류: ${error.message}</p>`;
+            } finally {
+                loading.classList.add('hidden');
+                resultContainer.classList.remove('hidden');
+                btn.disabled = false;
+                btn.classList.remove('opacity-50');
+            }
+        });
+    </script>
+</body>
+</html>
