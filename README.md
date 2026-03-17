@@ -8,6 +8,7 @@
 * **Workflow**: `[사용자 질문]` ➡️ `[PDF RAG 검색]` ➡️ `[DuckDuckGo 실시간 웹 검색]` ➡️ `[최종 마크다운 리포트 생성]`
 * 내부 문서에 없는 최신 트렌드를 웹 검색 툴을 통해 보완하여 Hallucination(환각)을 최소화했습니다.
 * **백엔드 서버와 UI 제공**: FastAPI와 순수 HTML/JS를 활용하여 구현했습니다.
+* **계층형 아키텍처 설계**: 단일 파일에 로직을 몰아넣지 않고, 라우터(Controller), 비즈니스 로직(Service), 데이터 접근(Repository) 스키마 설계(Dto)계층으로 역할을 엄격하게 분리하여 실무 프로덕션 수준의 유지보수성과 확장성을 확보했습니다.
 * **DB 스키마 안내 (SQLite)**: 서버 실행 시 자동으로 `task_agent.db` 및 `analysis_tasks` 테이블이 생성됩니다.
   * `id` (PK), `task_id` (UUID, 고유 작업 ID)
   * `target_name` (분석 대상 기업명), `status` (PENDING, IN_PROGRESS, COMPLETED, ERROR)
